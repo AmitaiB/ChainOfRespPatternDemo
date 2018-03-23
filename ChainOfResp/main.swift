@@ -16,9 +16,12 @@ let messages = [
 
 let localT = LocalTransmitter()
 let remoteT = RemoteTransmitter()
+let priorityT = PriorityTransmitter()
 
 for msg in messages {
-    if let index = msg.from.index(of: "@") {
+    if msg.subject.lowercased().hasPrefix("priority") {
+        priorityT.send(message: msg)
+    } else if let index = msg.from.index(of: "@") {
         let suffix = msg.from[index..<msg.from.endIndex]
         if msg.to.hasSuffix(String(suffix)) {
             localT.send(message: msg)
