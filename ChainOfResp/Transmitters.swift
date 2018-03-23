@@ -27,6 +27,24 @@ class Transmitter {
         }
         return false
     }
+    
+    class func createChain() -> Transmitter? {
+        let transmitterClasses: [Transmitter.Type] = [
+            PriorityTransmitter.self,
+            LocalTransmitter.self,
+            RemoteTransmitter.self
+        ]
+        
+        var link: Transmitter?
+        
+        for tClass in transmitterClasses.reversed() {
+            let existingLink = link
+            link = tClass.init()
+            link?.nextLink = existingLink
+        }
+        
+        return link
+    }
 }
 
 
