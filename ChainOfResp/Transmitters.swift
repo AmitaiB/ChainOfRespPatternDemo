@@ -8,21 +8,55 @@
 
 import Foundation
 
-
-class LocalTransmitter {
+class Transmitter {
+    var nextLink: Transmitter?
+    
+    required init() {}
+    
     func send(message: Message) {
-        print("Message to: \(message.to) sent locally")
+        if let next = nextLink {
+            next.send(message: message)
+        } else {
+            print("End of chain reached. Message not sent.")
+        }
+    }
+    
+    fileprivate class func matchEmailSuffix(with message: Message) -> Bool {
+        if let atIndex = message.from.index(of: "@") {
+            return message.to.hasSuffix(message.from[atIndex..<message.from.endIndex])
+        }
+        return false
     }
 }
 
-class RemoteTransmitter {
-    func send(message: Message) {
-        print("Message to: \(message.to) sent remotely")
+
+
+class LocalTransmitter: Transmitter {
+    override func send(message: Message) {
+        if Transmitter.matchEmailSuffix(with: message) {
+            print("Message to: \(message.to) sent locally")
+        } else {
+            super.send(message: message)
+        }
     }
 }
 
-class PriorityTransmitter {
-    func send(message: Message) {
-        print("Message to: \(message.to) sent as priority")
+class RemoteTransmitter: Transmitter {
+    override func send(message: Message) {
+        if Transmitter.matchEmailSuffix(with: message) {
+            print("Message to: \(message.to) sent remotely")
+        } else {
+            super.send(message: message)
+        }
+    }
+}
+
+class PriorityTransmitter: Transmitter {
+    override func send(message: Message) {
+        if Transmitter.matchEmailSuffix(with: message) {
+            print("Message to: \(message.to) sent as priority")
+        } else {
+            super.send(message: message)
+        }
     }
 }
