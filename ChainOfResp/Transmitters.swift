@@ -8,16 +8,18 @@
 
 import Foundation
 
+/// Abstract base class for `Transmitter` objects.
 class Transmitter {
     var nextLink: Transmitter?
     
     required init() {}
     
-    func send(message: Message) {
+    func send(message: Message) -> Bool {
         if let next = nextLink {
-            next.send(message: message)
+            return next.send(message: message)
         } else {
             print("End of chain reached. Message not sent.")
+            return false
         }
     }
     
@@ -46,34 +48,35 @@ class Transmitter {
 }
 
 
-
-
 class LocalTransmitter: Transmitter {
-    override func send(message: Message) {
+    override func send(message: Message) -> Bool {
         if Transmitter.matchEmailSuffix(with: message) {
             print("Message to: \(message.to) sent locally")
+            return true
         } else {
-            super.send(message: message)
+            return super.send(message: message)
         }
     }
 }
 
 class RemoteTransmitter: Transmitter {
-    override func send(message: Message) {
+    override func send(message: Message) -> Bool {
         if !Transmitter.matchEmailSuffix(with: message) {
             print("Message to: \(message.to) sent remotely")
+            return true
         } else {
-            super.send(message: message)
+            return super.send(message: message)
         }
     }
 }
 
 class PriorityTransmitter: Transmitter {
-    override func send(message: Message) {
+    override func send(message: Message) -> Bool {
         if message.subject.lowercased().hasPrefix("priority") {
             print("Message to: \(message.to) sent as priority")
+            return true
         } else {
-            super.send(message: message)
+            return super.send(message: message)
         }
     }
 }

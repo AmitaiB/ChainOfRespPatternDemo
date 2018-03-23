@@ -18,8 +18,9 @@ let localT = LocalTransmitter()
 let remoteT = RemoteTransmitter()
 let priorityT = PriorityTransmitter()
 
-if let chain = Transmitter.createChain() {
+if let chain = Transmitter.createChain(localOnly: true) {
     for msg in messages {
-        chain.send(message: msg)
+        let handled = chain.send(message: msg)
+        print("Message sent: \(handled)\n")
     }
 }
