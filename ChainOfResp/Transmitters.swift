@@ -23,11 +23,12 @@ class Transmitter {
     
     fileprivate class func matchEmailSuffix(with message: Message) -> Bool {
         if let atIndex = message.from.index(of: "@") {
-            return message.to.hasSuffix(message.from[atIndex..<message.from.endIndex])
+            return message.to.hasSuffix(String(message.from[atIndex..<message.from.endIndex]))
         }
         return false
     }
 }
+
 
 
 
@@ -43,7 +44,7 @@ class LocalTransmitter: Transmitter {
 
 class RemoteTransmitter: Transmitter {
     override func send(message: Message) {
-        if Transmitter.matchEmailSuffix(with: message) {
+        if !Transmitter.matchEmailSuffix(with: message) {
             print("Message to: \(message.to) sent remotely")
         } else {
             super.send(message: message)
@@ -53,7 +54,7 @@ class RemoteTransmitter: Transmitter {
 
 class PriorityTransmitter: Transmitter {
     override func send(message: Message) {
-        if Transmitter.matchEmailSuffix(with: message) {
+        if message.subject.lowercased().hasPrefix("priority") {
             print("Message to: \(message.to) sent as priority")
         } else {
             super.send(message: message)
