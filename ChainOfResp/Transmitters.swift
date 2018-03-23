@@ -28,12 +28,10 @@ class Transmitter {
         return false
     }
     
-    class func createChain() -> Transmitter? {
-        let transmitterClasses: [Transmitter.Type] = [
-            PriorityTransmitter.self,
-            LocalTransmitter.self,
-            RemoteTransmitter.self
-        ]
+    class func createChain(localOnly: Bool) -> Transmitter? {
+        let transmitterClasses: [Transmitter.Type] = localOnly ?
+            [ PriorityTransmitter.self, LocalTransmitter.self ] :
+            [ PriorityTransmitter.self, LocalTransmitter.self, RemoteTransmitter.self ]
         
         var link: Transmitter?
         
